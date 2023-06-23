@@ -2,4 +2,6 @@
 build/
 bin/
 SQL/
+doc/
+.gitignore
 CMakeLists.txt.user
