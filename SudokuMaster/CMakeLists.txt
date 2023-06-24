@@ -1,10 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-
-
 project(SudokuMaster VERSION 0.1 LANGUAGES CXX)
-
-
 
 set(CMAKE_AUTOUIC ON)
 
@@ -33,16 +29,21 @@ elseif ( ${CMAKE_SYSTEM_NAME} MATCHES "Windows" )
     set ( CMAKE_RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL ${CMAKE_CURRENT_SOURCE_DIR}/bin/minSizeRe-Win )
 endif ()
 
-find_package ( QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools )
+find_package ( QT NAMES Qt6 Qt5 REQUIRED COMPONENTS
+    Widgets
+    LinguistTools
+    Sql
+)
 
-find_package ( Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools )
+find_package ( Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS
+    Widgets
+    LinguistTools
+    Sql
+)
 
 set ( TS_FILES SudokuMaster_zh_CN.ts )
 
 set ( CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/install )
-
-find_package ( QT NAMES Qt6 REQUIRED COMPONENTS Widgets )
-find_package ( Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets )
 
 include_directories (
     ./
@@ -104,7 +105,10 @@ else ()
     qt5_create_translation ( QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES} )
 endif ()
 
-target_link_libraries ( SudokuMaster PRIVATE Qt${QT_VERSION_MAJOR}::Widgets )
+target_link_libraries ( SudokuMaster PRIVATE
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Sql
+)
 
 set_target_properties ( SudokuMaster PROPERTIES
 
