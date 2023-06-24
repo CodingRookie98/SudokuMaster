@@ -18,7 +18,7 @@ public:
 
 private:
     Ui::Login *ui;
-    QMessageBox message;
+//    QMessageBox message;
 
     void init();
     void BtnEvent();
