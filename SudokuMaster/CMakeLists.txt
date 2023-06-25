@@ -46,7 +46,7 @@ set ( TS_FILES SudokuMaster_zh_CN.ts )
 set ( CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/install )
 
 include_directories (
-    ./
+    ./3rdParty/include/
 )
 
 # 遍历所有.cpp、.h、.ui文件

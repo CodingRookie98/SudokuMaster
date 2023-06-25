@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     }
     MainWindow w;
     Login login(&w);
+    w.show();
     login.exec();
-//    w.show();
     return a.exec();
 }

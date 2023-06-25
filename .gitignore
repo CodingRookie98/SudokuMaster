@@ -3,5 +3,6 @@ build/
 bin/
 SQL/
 doc/
+3rdParty/
 .gitignore
 CMakeLists.txt.user
