@@ -6,7 +6,7 @@
 #include <QCryptographicHash>
 #include "DatabaseSingleton.h"
 #include <QSqlQuery>
-#include "LogServerSingleton.h"
+#include "LogServer.h"
 
 Login::Login(QWidget *parent) :
     QDialog(parent),
@@ -49,7 +49,7 @@ void Login::BtnEvent()
     });
 
     connect(ui->signUpBtn, &QPushButton::clicked, this, [&]() {
-        LogServerSingleton my_log(LogServerSingleton::_DEBUG,"sign up Btn cliked");
+        LogServer my_log(LogServer::_DEBUG,"sign up Btn cliked");
         if (ui->userNameEdit->text().isEmpty() || ui->passwordEdit->text().isEmpty()) {
             QMessageBox mes(this);
             mes.setText(tr("Username or password cannot be empty!"));
