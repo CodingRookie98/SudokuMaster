@@ -1,5 +1,4 @@
 #include "login.h"
-#include "qdebug.h"
 #include "qmessagebox.h"
 #include "qpushbutton.h"
 #include "ui_login.h"
@@ -40,8 +39,10 @@ void Login::BtnEvent()
 void Login::loginInClicked() {
     connect(ui->loginInBtn, &QPushButton::clicked, this, [&]() {
         //        qDebug() << "login in Btn cliked";
+        LogServer(LogServer::MessageType::_INFO, "login in Btn cliked");
         if (ui->userNameEdit->text().isEmpty() || ui->passwordEdit->text().isEmpty()) {
             QMessageBox mes(this);
+            qDebug() << "Login!!";
             mes.setText(tr("Username or password cannot be empty!"));
             mes.exec();
         } else {
