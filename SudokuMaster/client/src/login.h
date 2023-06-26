@@ -1,7 +1,6 @@
 #ifndef LOGIN_H
 #define LOGIN_H
 
-#include "qmessagebox.h"
 #include <QDialog>
 
 namespace Ui {
@@ -18,10 +17,11 @@ public:
 
 private:
     Ui::Login *ui;
-//    QMessageBox message;
 
     void init();
     void BtnEvent();
+    void loginInClicked();
+    void signUpClicked();
     QString sha256(QString password);
 };
 

@@ -1,11 +1,10 @@
 
 #include "mainWindow.h"
 #include "login.h"
-
 #include <QApplication>
-
 #include <QLocale>
 #include <QTranslator>
+#include <iostream>
 
 int main(int argc, char *argv[])
 {
@@ -22,6 +21,9 @@ int main(int argc, char *argv[])
     }
     MainWindow w;
     Login login(&w);
+    qDebug() << "start";
+    qDebug("start");
+    std::cout << "start!!";
     w.show();
     login.exec();
     return a.exec();

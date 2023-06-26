@@ -28,16 +28,19 @@ void Login::init()
     ui->signUpBtn->setText(tr("Sign up"));
     ui->userNameLabel->setText(tr("User Name"));
     ui->passwordLabel->setText(tr("PassWord"));
-    //    message.setParent(this);
+    ui->rememberMe->setText(tr("Remember me"));
 }
 
 void Login::BtnEvent()
 {
+    loginInClicked();
+    signUpClicked();
+}
+
+void Login::loginInClicked() {
     connect(ui->loginInBtn, &QPushButton::clicked, this, [&]() {
-        qDebug() << "login in Btn cliked";
+        //        qDebug() << "login in Btn cliked";
         if (ui->userNameEdit->text().isEmpty() || ui->passwordEdit->text().isEmpty()) {
-            //            message.setText(tr("Username or password cannot be empty!"));
-            //            message.exec();
             QMessageBox mes(this);
             mes.setText(tr("Username or password cannot be empty!"));
             mes.exec();
@@ -47,44 +50,47 @@ void Login::BtnEvent()
             qDebug() << userName << ": " << password << password.size();
         }
     });
+}
 
+void Login::signUpClicked() {
     connect(ui->signUpBtn, &QPushButton::clicked, this, [&]() {
-        LogServer my_log(LogServer::_DEBUG,"sign up Btn cliked");
         if (ui->userNameEdit->text().isEmpty() || ui->passwordEdit->text().isEmpty()) {
             QMessageBox mes(this);
             mes.setText(tr("Username or password cannot be empty!"));
             mes.exec();
         } else {
-            QString userName(ui->userNameEdit->text());
+            QString userName = ui->userNameEdit->text();
+            QString password = sha256(ui->passwordEdit->text());
+
             QSqlQuery query(DatabaseSingleton::getInstance());
-            QString select = QString("SELECT userName FROM user_info WHERE userName = '%1'").arg(userName);
-            if (query.prepare(select)) {
-                bool res = query.exec();
-                // * 如果不存在同样的用户名便向数据库插入数据
-                if (res && !query.lastQuery().isEmpty()) {
-                    qDebug() << "can insert";
-                    QString password(sha256(ui->passwordEdit->text()));
-                    QString insert = QString("INSERT INTO user_info (userName, pwd) VALUES ('%1','%2')").arg(userName).arg(password);
-                    if (query.prepare(insert)) {
-                        if (!query.exec()) {
-                            qDebug() << "query.exec() failed";
-                        } else {
-                            QMessageBox mes(this);
-                            mes.setText("sign up sucess, please login in");
-                            mes.exec();
-                        }
-                    } else {
-                        qDebug() << "query.prepare() failed";
-                    }
-                } else if (res && query.lastQuery().isEmpty()) {
+            QString select = "SELECT userName FROM user_info WHERE userName = :userName";
+            query.prepare(select);
+            query.bindValue(":userName", userName);
+
+            if (query.exec()) {
+                if (query.next()) {
                     QMessageBox mes(this);
-                    mes.setText(QString("username \"%1\" already taken").arg(userName));
+                    mes.setText(QString("Username \"%1\" already taken").arg(userName));
                     mes.exec();
-                } else if (!res) {
-                    qDebug() << "query.exec(select) failed";
+                } else {
+                    QString insert = "INSERT INTO user_info (userName, pwd) VALUES (:userName, :password)";
+                    query.prepare(insert);
+                    query.bindValue(":userName", userName);
+                    query.bindValue(":password", password);
+
+                    if (query.exec()) {
+                        LogServer(LogServer::MessageType::_INFO, insert);
+                        QMessageBox mes(this);
+                        mes.setText("Sign up success, please login");
+                        mes.exec();
+                    } else {
+                        LogServer(LogServer::MessageType::_ERROR, insert);
+                        qDebug() << "query.exec() failed";
+                    }
                 }
             } else {
-                qDebug() << (query.isValid() ? "query is valid" : "query not valid");
+                LogServer(LogServer::MessageType::_ERROR, select);
+                qDebug() << "query.exec(select) failed!!!!";
             }
         }
     });

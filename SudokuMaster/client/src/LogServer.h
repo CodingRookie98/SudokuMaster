@@ -7,7 +7,7 @@
 
 class LogServer {
 public:
-    enum messageType {
+    enum MessageType {
         _TRACE,
         _DEBUG,
         _INFO,
@@ -16,12 +16,12 @@ public:
         _CRITICAL
     };
 
-    LogServer(const LogServer::messageType &type, const QString &message);
+    LogServer(const LogServer::MessageType &type, const QString &message);
     LogServer(const LogServer &)            = delete;
     LogServer &operator=(const LogServer &) = delete;
     ~LogServer();
 
-    void operator()(const LogServer::messageType &type, const QString &message);
+    void operator()(const LogServer::MessageType &type, const QString &message);
 
 private:
     std::shared_ptr<spdlog::logger> my_logger;

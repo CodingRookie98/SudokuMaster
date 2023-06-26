@@ -1,7 +1,7 @@
+.idea/
 .vscode/
 build/
 bin/
-SQL/
 doc/
 3rdParty/
 .gitignore
