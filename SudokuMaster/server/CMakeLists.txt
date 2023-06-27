@@ -1,19 +1,5 @@
 ﻿set(projectName "SudokuMaster_server")
 
-if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    # Linux系统
-    # 在这里添加针对Linux的特定配置
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_CURRENT_SOURCE_DIR}/bin/Debug-Linux)
-    Set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_SOURCE_DIR}/bin/Release-Linux)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL ${CMAKE_CURRENT_SOURCE_DIR}/bin/minSizeRe-Linux)
-elseif (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    # Windows系统
-    # 在这里添加针对Windows的特定配置
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_CURRENT_SOURCE_DIR}/bin/Debug-Win)
-    Set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_SOURCE_DIR}/bin/Release-Win)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL ${CMAKE_CURRENT_SOURCE_DIR}/bin/minSizeRe-Win)
-endif ()
-
 # 遍历所有.cpp、.h、.ui文件
 file(GLOB_RECURSE cpp_h_ui_path
         ./src/*.cpp
