@@ -45,12 +45,25 @@ if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     # ${CMAKE_CURRENT_SOURCE_DIR}/android)
     # For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
     qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
+else ()
+    if (ANDROID)
+        add_library(${targetName} SHARED
+                ${PROJECT_SOURCES}
+                )
+        # Define properties for Android with Qt 5 after find_package() calls as:
+        #    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
+    else ()
+        add_executable(${targetName}
+                ${PROJECT_SOURCES}
+                )
+    endif ()
+    qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif ()
 
 target_link_libraries(${targetName} PRIVATE
         Qt${QT_VERSION_MAJOR}::Widgets
         Qt${QT_VERSION_MAJOR}::Sql
-        Qt6::Network
+        Qt${QT_VERSION_MAJOR}::Network
         )
 
 set_target_properties(${targetName} PROPERTIES

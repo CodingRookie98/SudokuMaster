@@ -33,7 +33,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS
 target_link_libraries(${projectName}
         PRIVATE
         Qt${QT_VERSION_MAJOR}::Core
-        Qt6::Network
+        Qt${QT_VERSION_MAJOR}::Network
         )
 
 install(TARGETS ${projectName}
