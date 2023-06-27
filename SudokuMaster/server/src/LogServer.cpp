@@ -31,6 +31,6 @@ void LogServer::operator()(const MessageType &type, const QString &message) {
     if (levelIter != levelMap.end()) {
         QString currentDateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
         QTextStream textStream(&logFile);
-        textStream << "[" << currentDateTime << "]" << levelIter->second << message;
+        textStream << "[" << currentDateTime << "]" << levelIter->second << message + "\n";
     }
 }
