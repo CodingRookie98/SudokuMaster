@@ -5,7 +5,7 @@
 #include "tcpService.h"
 #include "LogServer.h"
 
-static const QHostAddress hostAddress(QString("172.29.45.237"));
+static const QHostAddress hostAddress(QString("180.76.76.76"));
 static const qint16 port(4567);
 
 tcpService::tcpService(QObject* parent) : QTcpSocket(parent){
