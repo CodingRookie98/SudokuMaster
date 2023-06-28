@@ -3,28 +3,32 @@
 
 #include <QString>
 #include <memory>
-#include <QFile>
+#include <QSharedPointer>
+#include "windows.h"
+#include "spdlog/common.h"
+#include "spdlog/async.h"
+#include "spdlog/sinks/basic_file_sink.h"
 
-class LogServer {
+class LogServer{
 public:
     enum MessageType {
-        _TRACE,
-        _DEBUG,
-        _INFO,
-        _WARN,
-        _ERROR,
-        _CRITICAL
+        Trace,
+        Debug,
+        Info,
+        Warn,
+        Error,
+        Critical
     };
-
-    LogServer(const LogServer::MessageType &type, const QString &message);
-    LogServer(const LogServer &)            = delete;
+    static LogServer& getInstance();
+    LogServer(const LogServer &) = delete;
     LogServer &operator=(const LogServer &) = delete;
+
+    void log(const LogServer::MessageType& type, const QString& message);
     ~LogServer();
-
-    void operator()(const LogServer::MessageType &type, const QString &message);
-
 private:
-    static QFile logFile;
+
+    LogServer();
+    std::shared_ptr<spdlog::logger> mLogger;
 };
 
 #endif // LOGSERVERSINGLETON_H

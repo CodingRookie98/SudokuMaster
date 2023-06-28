@@ -2,35 +2,43 @@
 #include <QDebug>
 #include <QDateTime>
 
-QFile LogServer::logFile("log.txt");
-
-LogServer::LogServer(const MessageType &type, const QString &message) {
-    if (logFile.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
-        (*this)(type, message);
-    } else {
-
+void LogServer::log(const LogServer::MessageType &type, const QString &message) {
+    switch (type) {
+        case MessageType::Trace:
+            mLogger->trace(message.toStdString());
+        case MessageType::Debug:
+            mLogger->debug(message.toStdString());
+            break;
+        case MessageType::Info:
+            mLogger->info(message.toStdString());
+            break;
+        case MessageType::Warn:
+            mLogger->warn(message.toStdString());
+            break;
+        case MessageType::Error:
+            mLogger->error(message.toStdString());
+            break;
+        case MessageType::Critical:
+            mLogger->critical(message.toStdString());
+        default:
+            break;
     }
+}
 
+
+LogServer::LogServer() {
+    QString formattedTime = QDateTime::currentDateTime().toString("yy-MM-dd-HH");
+    qDebug() << "LogServer init";
+    mLogger = spdlog::basic_logger_mt<spdlog::async_factory>("server", formattedTime.toStdString() + "-logS.txt");
+    mLogger->set_level(spdlog::level::level_enum::trace);
 }
 
 LogServer::~LogServer() {
-    logFile.close();
+    qDebug() << "star to destroy";
+    mLogger.reset();
 }
 
-void LogServer::operator()(const MessageType &type, const QString &message) {
-    static const std::unordered_map<MessageType, QString>
-            levelMap = {
-            {MessageType::_TRACE,    "[trace]"},
-            {MessageType::_DEBUG,    "[debug]"},
-            {MessageType::_INFO,     "[info]"},
-            {MessageType::_WARN,     "[warn]"},
-            {MessageType::_ERROR,    "[error]"},
-            {MessageType::_CRITICAL, "[critical"}};
-
-    auto levelIter = levelMap.find(type);
-    if (levelIter != levelMap.end()) {
-        QString currentDateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
-        QTextStream textStream(&logFile);
-        textStream << "[" << currentDateTime << "]" << levelIter->second << message + "\n";
-    }
+LogServer &LogServer::getInstance() {
+    static LogServer instance;
+    return instance;
 }
