@@ -20,12 +20,8 @@ add_executable(${projectName}
         ${PROJECT_SOURCES}
         )
 
-# 设置预编译头文件
-target_precompile_headers(${projectName} PRIVATE
-        ../3rdParty/spdlog/common.h
-        ../3rdParty/spdlog/async.h
-        ../3rdParty/spdlog/sinks/basic_file_sink.h
-        )
+ # spdlog库
+find_package(spdlog REQUIRED PATHS ../3rdParty/lib)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS
         Core
@@ -36,6 +32,9 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS
         Network
         )
 
+target_link_libraries(${projectName} PRIVATE
+        spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>
+        )
 
 target_link_libraries(${projectName}
         PRIVATE
