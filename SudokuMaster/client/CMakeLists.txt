@@ -1,22 +1,7 @@
-set (targetName "SudokuMaster_client")
+set(targetName "SudokuMaster_client")
 set(TS_FILES ./src/SudokuMaster_zh_CN.ts)
 
 set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/install)
-
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS
-        Widgets
-        LinguistTools
-        Sql
-        Network
-        )
-
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS
-        Widgets
-        LinguistTools
-        Sql
-        Network
-        )
-
 
 
 # 遍历所有.cpp、.h、.ui文件
@@ -34,6 +19,20 @@ endforeach (cpp_h_ui_file_path)
 set(PROJECT_SOURCES
         ${SOURCES_CPP_H_UI}
         ${TS_FILES}
+        )
+
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS
+        Widgets
+        LinguistTools
+        Sql
+        Network
+        )
+
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS
+        Widgets
+        LinguistTools
+        Sql
+        Network
         )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -61,13 +60,12 @@ else ()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif ()
 
-# 设置预编译头文件
-target_precompile_headers(${targetName} PRIVATE
-        ../3rdParty/spdlog/common.h
-        ../3rdParty/spdlog/async.h
-        ../3rdParty/spdlog/sinks/basic_file_sink.h
-        )
 
+find_package(spdlog REQUIRED PATHS ../3rdParty/lib)
+
+target_link_libraries(${targetName} PRIVATE
+        spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>
+        )
 target_link_libraries(${targetName} PRIVATE
         Qt${QT_VERSION_MAJOR}::Widgets
         Qt${QT_VERSION_MAJOR}::Sql
