@@ -44,13 +44,14 @@ void sslSocket::signalProcess() {
 
     this->connectToHostEncrypted(hostAddress, port);
     connect(this, &QSslSocket::encrypted, this, [&]() {
-        this->log(LogServer::MessageType::Info,
+        sslSocket::log(LogServer::MessageType::Info,
                   QString("Successfully connected : ") + this->peerAddress().toString() + ":" + QString::number(this->peerPort()));
+
     });
 
     connect(this, &QSslSocket::sslErrors, this, [=](const QList<QSslError> &errors) {
                 foreach(auto error, errors) {
-                log(LogServer::MessageType::Error, error.errorString());
+                sslSocket::log(LogServer::MessageType::Error, error.errorString());
             }
     });
 }

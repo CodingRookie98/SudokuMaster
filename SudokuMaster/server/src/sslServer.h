@@ -5,6 +5,7 @@
 #include <QTcpServer>
 #include <QSslServer>
 #include "LogServer.h"
+#include <QObject>
 
 class sslServer : public QSslServer
 {
@@ -15,7 +16,9 @@ public:
 private:
     void init();
     void signalProcess();
-    void log(const LogServer::MessageType& type, const QString& text);
+    static void log(const LogServer::MessageType& type, const QString& text);
+public slots:
+    static void errorProcess(const QSslSocket* socket, const QAbstractSocket::SocketError& error);
 };
 
 #endif // TCPSERVER_H

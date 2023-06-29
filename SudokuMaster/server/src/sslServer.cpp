@@ -7,8 +7,7 @@
 #include <QFile>
 #include <QSslKey>
 
-sslServer::sslServer(QObject *parent) {
-
+sslServer::sslServer(QObject *parent) : QSslServer(parent) {
     init();
     signalProcess();
 }
@@ -26,12 +25,13 @@ void sslServer::init() {
         ca = QSslCertificate(&caFile, QSsl::EncodingFormat::Der);
         sslKey = QSslKey(&key, QSsl::Rsa);
     } else {
-        this->log(LogServer::MessageType::Error, QString("failed to open server.cer"));
+        sslServer::log(LogServer::MessageType::Error, QString("failed to open server.cer"));
     }
     caFile.close();
 
     if (ca.isNull()) {
         qDebug() << "ca is NULL";
+        sslServer::log(LogServer::MessageType::Critical, QString("ca is NULL"));
     } else {
         // 设置证书
         sslConfig.setLocalCertificate(ca);
@@ -46,33 +46,37 @@ void sslServer::init() {
     this->setSslConfiguration(sslConfig);
 
     if (!this->listen(QHostAddress::Any, 45678)) {
-        this->log(LogServer::MessageType::Error, QString("Failed to create server"));
+        sslServer::log(LogServer::MessageType::Error, QString("Failed to create server"));
     } else if (this->isListening()) {
-        this->log(LogServer::MessageType::Info, QString("Listening on port " + QString::number(this->serverPort())));
+        sslServer::log(LogServer::MessageType::Info,
+                       QString("Listening on port " + QString::number(this->serverPort())));
     }
 }
 
 void sslServer::signalProcess() {
+
     connect(this, &QSslServer::pendingConnectionAvailable, this, [&]() {
         QTcpSocket *s = this->nextPendingConnection();
-        qDebug() << QString("Connection established ") + s->peerAddress().toString() + ":"
-                    + QString::number(s->peerPort());
-        LogServer::getInstance().log(LogServer::MessageType::Info,
-                                     QString("Connection established ") + s->peerAddress().toString() + ":"
-                                     + QString::number(s->peerPort()));
+        sslServer::log(LogServer::MessageType::Info,
+                       QString("Connection established ") + s->peerAddress().toString() + ":"
+                       + QString::number(s->peerPort()));
     });
 
     connect(this, &QSslServer::newConnection, this, [&]() {
-        qDebug() << "A new connection is coming";
-        LogServer::getInstance().log(LogServer::MessageType::Debug, "A new connection is coming");
+        sslServer::log(LogServer::MessageType::Debug, "A new connection is coming");
     });
 
-    connect(this, &QSslServer::handshakeInterruptedOnError, this, &sslServer::errorProcess);
-
-    connect(this, &sslServer::peerVerifyError, this, &sslServer::errorProcess);
+    // 处理在在服务器监听期间发生握手时产生的错误
+    connect(this, &QSslServer::errorOccurred, this, &sslServer::errorProcess);
 }
 
 void sslServer::log(const LogServer::MessageType &type, const QString &text) {
     qDebug() << text;
     LogServer::getInstance().log(type, text);
+}
+
+void sslServer::errorProcess(const QSslSocket *socket, const QAbstractSocket::SocketError &error) {
+    sslServer::log(LogServer::MessageType::Info,
+                   QString(socket->peerAddress().toString() + ":"
+                           + QString::number(socket->peerPort()) + " " + qt_error_string(error)));
 }
