@@ -1,4 +1,7 @@
 set (targetName "SudokuMaster_client")
+set(TS_FILES ./src/SudokuMaster_zh_CN.ts)
+
+set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/install)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS
         Widgets
@@ -14,9 +17,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS
         Network
         )
 
-set(TS_FILES ./src/SudokuMaster_zh_CN.ts)
 
-set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/install)
 
 # 遍历所有.cpp、.h、.ui文件
 file(GLOB_RECURSE cpp_h_ui_path
@@ -59,6 +60,13 @@ else ()
     endif ()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif ()
+
+# 设置预编译头文件
+target_precompile_headers(${targetName} PRIVATE
+        ../3rdParty/spdlog/common.h
+        ../3rdParty/spdlog/async.h
+        ../3rdParty/spdlog/sinks/basic_file_sink.h
+        )
 
 target_link_libraries(${targetName} PRIVATE
         Qt${QT_VERSION_MAJOR}::Widgets

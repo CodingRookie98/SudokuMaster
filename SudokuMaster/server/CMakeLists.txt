@@ -20,6 +20,13 @@ add_executable(${projectName}
         ${PROJECT_SOURCES}
         )
 
+# 设置预编译头文件
+target_precompile_headers(${projectName} PRIVATE
+        ../3rdParty/spdlog/common.h
+        ../3rdParty/spdlog/async.h
+        ../3rdParty/spdlog/sinks/basic_file_sink.h
+        )
+
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS
         Core
         Network
