@@ -38,10 +38,12 @@ elseif (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
         set(CMAKE_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/build-win)
     endif ()
 endif ()
+
 message(STATUS "CMake Source Directory: ${CMAKE_SOURCE_DIR}")
 message(STATUS "CMake Binary Directory: ${CMAKE_BINARY_DIR}")
+
 include_directories(
-        ./3rdParty
+        ./3rdParty/include
 )
 
 add_subdirectory(
