@@ -6,6 +6,7 @@ void LogServer::log(const LogServer::MessageType &type, const QString &message) 
     switch (type) {
         case MessageType::Trace:
             mLogger->trace(message.toStdString());
+            break;
         case MessageType::Debug:
             mLogger->debug(message.toStdString());
             break;
@@ -20,6 +21,7 @@ void LogServer::log(const LogServer::MessageType &type, const QString &message) 
             break;
         case MessageType::Critical:
             mLogger->critical(message.toStdString());
+            break;
         default:
             break;
     }
@@ -27,9 +29,8 @@ void LogServer::log(const LogServer::MessageType &type, const QString &message) 
 
 
 LogServer::LogServer() {
-    QString formattedTime = QDateTime::currentDateTime().toString("yy-MM-dd-HH");
     qDebug() << "LogServer init";
-    mLogger = spdlog::basic_logger_mt<spdlog::async_factory>("user", formattedTime.toStdString() + "-logC.txt");
+    mLogger = spdlog::basic_logger_mt<spdlog::async_factory>("user", "logClient.txt");
     mLogger->set_level(spdlog::level::level_enum::trace);
 }
 
