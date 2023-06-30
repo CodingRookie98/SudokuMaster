@@ -1,15 +1,18 @@
 #include "serverLog.h"
-#include <QDebug>
-#include <QDateTime>
+#include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/sinks/hourly_file_sink.h"
+#include "spdlog/async.h"
 
-ServerLog::ServerLog(const QString &logFileName) {
-    qDebug() << "LogServer init";
-    mLogger = spdlog::basic_logger_mt<spdlog::async_factory>("server", logFileName.toStdString());
+ServerLog::ServerLog(const QString &logFileName) :  QRunnable() {
+    std::vector<spdlog::sink_ptr> sinks;
+    sinks.push_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
+    sinks.push_back(std::make_shared<spdlog::sinks::hourly_file_sink_mt>(logFileName.toStdString()));
+    mLogger = std::make_shared<spdlog::logger>("server", sinks.begin(), sinks.end());
     mLogger->set_level(spdlog::level::level_enum::trace);
+    setAutoDelete(false);
 }
 
-void ServerLog::log(const ServerLog::MessageType &type, const QString &message) {
-    qDebug() << "write " + message << " to log";
+void ServerLog::log(const ServerLog::MessageType &type, const QString &message) const {
     switch (type) {
         case MessageType::Trace:
             mLogger->trace(message.toStdString());
@@ -37,6 +40,9 @@ void ServerLog::log(const ServerLog::MessageType &type, const QString &message) 
 }
 
 ServerLog::~ServerLog() {
-    qDebug() << "star to destroy ServerLog";
     mLogger.reset();
+}
+
+void ServerLog::run() {
+    
 }

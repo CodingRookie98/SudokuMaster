@@ -1,16 +1,12 @@
 #ifndef LOGSERVER_H
 #define LOGSERVER_H
 
-#ifdef _WIN32
-#include "windows.h"
-#endif
-
 #include <QString>
-//#include "spdlog/common.h"
-#include "spdlog/async.h"
+#include <QRunnable>
+#include <QThread>
 #include "spdlog/sinks/basic_file_sink.h"
 
-class ServerLog{
+class ServerLog : public QRunnable {
 public:
     enum MessageType {
         Trace,
@@ -20,13 +16,16 @@ public:
         Error,
         Critical
     };
-    ServerLog(const QString& logFileName);
+    explicit ServerLog(const QString& logFileName);
+    ~ServerLog() override;
 
-    void log(const ServerLog::MessageType& type, const QString& message);
-    ~ServerLog();
+    void log(const ServerLog::MessageType& type = Debug, const QString& message = "") const;
+
+protected:
+    void run() override;
 
 private:
     std::shared_ptr<spdlog::logger> mLogger;
 };
 
-#endif // LOGSERVERSINGLETON_H
+#endif // LOGSERVER_H
