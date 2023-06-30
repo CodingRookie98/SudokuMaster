@@ -21,9 +21,9 @@ void sslSocket::init() {
     QSslConfiguration sslConfig;
     QSslCertificate caServer;
 
-    QFile caServerFile("C:/0_WorkSpace/QT_Learning/SudokuMaster/SudokuMaster/CA/Server/server.cer");
+    QFile caServerFile(":/CA/CA/server.crt");
     if (caServerFile.open(QIODevice::ReadOnly)) {
-        caServer = QSslCertificate(&caServerFile, QSsl::EncodingFormat::Der);
+        caServer = QSslCertificate(&caServerFile);
     } else {
         qDebug() << "failed to open server.crt";
     }
@@ -53,6 +53,9 @@ void sslSocket::signalProcess() {
                 foreach(auto error, errors) {
                 sslSocket::log(LogServer::MessageType::Error, error.errorString());
             }
+    });
+    connect(this, &QSslSocket::stateChanged, this, [](const QAbstractSocket::SocketState& state){
+       qDebug() << state;
     });
 }
 
