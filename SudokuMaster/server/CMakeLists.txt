@@ -18,6 +18,7 @@ set(PROJECT_SOURCES
 
 add_executable(${projectName}
         ${PROJECT_SOURCES}
+        ./resource/res.qrc
         )
 
  # spdlog库
