@@ -44,5 +44,5 @@ ServerLog::~ServerLog() {
 }
 
 void ServerLog::run() {
-    
+
 }
