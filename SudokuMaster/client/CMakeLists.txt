@@ -35,30 +35,31 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS
         Network
         )
 
-if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+#if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(${targetName}
             MANUAL_FINALIZATION
             ${PROJECT_SOURCES}
+            ./resource/res.qrc
             )
     # Define target properties for Android with Qt 6 as:
     # set_property(TARGET SudokuMaster APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
     # ${CMAKE_CURRENT_SOURCE_DIR}/android)
     # For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
     qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
-else ()
-    if (ANDROID)
-        add_library(${targetName} SHARED
-                ${PROJECT_SOURCES}
-                )
-        # Define properties for Android with Qt 5 after find_package() calls as:
-        #    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-    else ()
-        add_executable(${targetName}
-                ${PROJECT_SOURCES}
-                )
-    endif ()
-    qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
-endif ()
+#else ()
+#    if (ANDROID)
+#        add_library(${targetName} SHARED
+#                ${PROJECT_SOURCES}
+#                )
+#        # Define properties for Android with Qt 5 after find_package() calls as:
+#        #    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
+#    else ()
+#        add_executable(${targetName}
+#                ${PROJECT_SOURCES}
+#                )
+#    endif ()
+#    qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
+#endif ()
 
 
 find_package(spdlog REQUIRED PATHS ../3rdParty/lib)
