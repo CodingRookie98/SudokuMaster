@@ -4,21 +4,28 @@
 
 #include <QTcpServer>
 #include <QSslServer>
-#include "LogServer.h"
+#include "serverLog.h"
 #include <QObject>
 
-class sslServer : public QSslServer
+class sslServer : public QSslServer, public QRunnable
 {
     Q_OBJECT
 public:
-    explicit sslServer(QObject *parent = nullptr);
+    explicit sslServer(QObject *parent = nullptr, const QString& logFileName = "server-logs/server-log.txt");
+    ~sslServer();
 
+    void log(const ServerLog::MessageType& type, const QString& text);
+public slots:
+    void errorProcess(const QSslSocket* socket, const QAbstractSocket::SocketError& error);
+
+protected:
+    void run() override;
 private:
+    ServerLog* logger;
+
     void init();
     void signalProcess();
-    static void log(const LogServer::MessageType& type, const QString& text);
-public slots:
-    static void errorProcess(const QSslSocket* socket, const QAbstractSocket::SocketError& error);
+    void sslSocketReady(QSslSocket* sslSocket);
 };
 
 #endif // TCPSERVER_H
