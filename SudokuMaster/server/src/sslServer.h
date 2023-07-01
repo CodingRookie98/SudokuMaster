@@ -5,7 +5,8 @@
 #include <QTcpServer>
 #include <QSslServer>
 #include "serverLog.h"
-#include <QObject>
+#include "sslSocketThread.h"
+#include "connectedMap.h"
 
 class sslServer : public QSslServer, public QRunnable
 {
@@ -17,11 +18,13 @@ public:
     void log(const ServerLog::MessageType& type, const QString& text);
 public slots:
     void errorProcess(const QSslSocket* socket, const QAbstractSocket::SocketError& error);
+signals:
 
 protected:
     void run() override;
 private:
     ServerLog* logger;
+    ConnectedMap* connectedMap;
 
     void init();
     void signalProcess();

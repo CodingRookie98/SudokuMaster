@@ -1,17 +1,17 @@
 
 #include "sslServer.h"
-#include <QSslServer>
 #include <QSslConfiguration>
 #include <QSslCertificate>
 #include <QFile>
 #include <QSslKey>
 #include <QThreadPool>
 #include "sslSocketThread.h"
-#include <u
+
 
 sslServer::sslServer(QObject *parent, const QString &logFileName) :
         QSslServer(parent),
         logger(new ServerLog(logFileName)),
+        connectedMap(new ConnectedMap),
         QRunnable() {
 
     setAutoDelete(false);
@@ -48,7 +48,6 @@ void sslServer::init() {
     }
 
     this->setSslConfiguration(sslConfig);
-
 }
 
 void sslServer::signalProcess() {
@@ -71,7 +70,6 @@ void sslServer::signalProcess() {
 
 void sslServer::log(const ServerLog::MessageType &type, const QString &text) {
 //    qDebug() << text;
-    QThreadPool::globalInstance()->start(logger);
     logger->log(type, text);
 }
 
@@ -83,25 +81,26 @@ void sslServer::errorProcess(const QSslSocket *socket, const QAbstractSocket::So
 
 sslServer::~sslServer() {
     delete logger;
+    delete connectedMap;
 }
 
 void sslServer::run() {
+    QThreadPool::globalInstance()->start(logger);
+    QThreadPool::globalInstance()->start(connectedMap);
     init();
     signalProcess();
 }
 
 void sslServer::sslSocketReady(QSslSocket *sslSocket) {
-    // Todo : 
-    static QSharedPointer<QSslSocket> sharedSslSocket(sslSocket);
-    static QSharedPointer<SslSocketThread> mSslSocketThread((new SslSocketThread(sharedSslSocket)));
 
-    QThreadPool::globalInstance()->start(mSslSocketThread.get());
+    QSharedPointer<QSslSocket> sharedSslSocket(sslSocket);
+    QSharedPointer<SslSocketThread> mSslSocketThread((new SslSocketThread(sharedSslSocket)));
+
+    // 将连接放入map进行管理，在map类中统一进行启动或者删除
+    emit connectedMap->insertToMap(sharedSslSocket, mSslSocketThread);
     connect(sharedSslSocket.get(), &QSslSocket::disconnected, this, [&]() {
-        this->log(ServerLog::MessageType::Info, QString(sharedSslSocket->peerAddress().toString() + ":"
-                                                        + QString::number(sharedSslSocket->peerPort()) + " "
-                                                        + "Disconnected"));
-        mSslSocketThread.reset();
-        sharedSslSocket.reset();
-        qDebug() << sharedSslSocket.isNull();
+        qDebug() <<  "one sslSocket Disconnected";
+        // 发出信号让connectionMap从map删除此链接
+        emit connectedMap->connectionDisconnected(sharedSslSocket);
     });
 }
