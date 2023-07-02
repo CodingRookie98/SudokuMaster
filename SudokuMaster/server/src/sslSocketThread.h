@@ -15,17 +15,26 @@
 #include <QRunnable>
 
 class SslSocketThread : public QObject, public QRunnable {
-    Q_OBJECT
+Q_OBJECT
+
 public:
-    explicit SslSocketThread(const QSharedPointer<QSslSocket>& sslSocket);
+    explicit SslSocketThread(const QSharedPointer<QSslSocket> &sslSocket);
+
     ~SslSocketThread() override;
+
+signals:
+
 protected:
     void run() override;
+
 private:
-    QSharedPointer<QSslSocket> mSslSocket;
+    QSharedPointer<QSslSocket> sharedSslSocket;
 
     void init();
+
     void signalProcess();
+
+    void log(const QString& message) ;
 };
 
 
