@@ -35,7 +35,7 @@ void ServerLog::log(const ServerLog::MessageType &type, const QString &message) 
         default:
             break;
     }
-    // 解决内容不写入文件的问题
+    // Solve the problem that the content is not written to the log file
     mLogger->flush();
 }
 
