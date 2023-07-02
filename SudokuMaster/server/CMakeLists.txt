@@ -5,6 +5,8 @@ file(GLOB_RECURSE cpp_h_ui_path
         ./src/*.cpp
         ./src/*.h
         ./src/*.ui
+        ../publicFile/*.h
+        ../publicFile/*.cpp
         )
 
 foreach (cpp_h_ui_file_path ${cpp_h_ui_path})
