@@ -32,5 +32,7 @@ int main(int argc, char *argv[]) {
         QCoreApplication::exit();
     }
 
+    // Wait for all threads in the thread pool to complete their work before exiting
+    QThreadPool::globalInstance()->waitForDone(-1);
     return QCoreApplication::exec();
 }
