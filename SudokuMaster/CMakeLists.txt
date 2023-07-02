@@ -44,6 +44,7 @@ message(STATUS "CMake Binary Directory: ${CMAKE_BINARY_DIR}")
 
 include_directories(
         ./3rdParty/include
+        ./publicFile
 )
 
 add_subdirectory(
