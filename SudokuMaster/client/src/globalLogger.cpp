@@ -1,8 +1,21 @@
-#include "LogServer.h"
+#include "globalLogger.h"
 #include <QDebug>
-#include <QDateTime>
+#include "spdlog/sinks/daily_file_sink.h"
 
-void LogServer::log(const LogServer::MessageType &type, const QString &message) {
+GlobalLogger::GlobalLogger(): QRunnable() {
+    qDebug() << "GlobalLogger init";
+    mLogger = spdlog::daily_logger_mt<spdlog::async_factory>("user", "client-logs/log.txt", 23, 59);
+    mLogger->set_level(spdlog::level::level_enum::trace);
+    setAutoDelete(false);
+}
+
+GlobalLogger::~GlobalLogger() {
+    qDebug() << "star to destroy";
+    mLogger.reset();
+}
+
+
+void GlobalLogger::log(const GlobalLogger::MessageType &type, const QString &message) {
     switch (type) {
         case MessageType::Trace:
             mLogger->trace(message.toStdString());
@@ -27,19 +40,11 @@ void LogServer::log(const LogServer::MessageType &type, const QString &message) 
     }
 }
 
-
-LogServer::LogServer() {
-    qDebug() << "LogServer init";
-    mLogger = spdlog::basic_logger_mt<spdlog::async_factory>("user", "logClient.txt");
-    mLogger->set_level(spdlog::level::level_enum::trace);
-}
-
-LogServer::~LogServer() {
-    qDebug() << "star to destroy";
-    mLogger.reset();
-}
-
-LogServer &LogServer::getInstance() {
-    static LogServer instance;
+GlobalLogger &GlobalLogger::getInstance() {
+    static GlobalLogger instance;
     return instance;
+}
+
+void GlobalLogger::run() {
+
 }
