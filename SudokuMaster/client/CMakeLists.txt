@@ -3,7 +3,6 @@ set(TS_FILES ./src/SudokuMaster_zh_CN.ts)
 
 set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/install)
 
-
 # 遍历所有.cpp、.h、.ui文件
 file(GLOB_RECURSE cpp_h_ui_path
         ./src/*.cpp
@@ -26,14 +25,12 @@ set(PROJECT_SOURCES
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS
         Widgets
         LinguistTools
-        Sql
         Network
         )
 
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS
         Widgets
         LinguistTools
-        Sql
         Network
         )
 
@@ -43,10 +40,6 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS
             ${PROJECT_SOURCES}
             ./resource/res.qrc
             )
-    # Define target properties for Android with Qt 6 as:
-    # set_property(TARGET SudokuMaster APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-    # ${CMAKE_CURRENT_SOURCE_DIR}/android)
-    # For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
     qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 #else ()
 #    if (ANDROID)
@@ -64,14 +57,12 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS
 #endif ()
 
 
-find_package(spdlog REQUIRED PATHS ../3rdParty/lib)
-
 target_link_libraries(${targetName} PRIVATE
         spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>
         )
+
 target_link_libraries(${targetName} PRIVATE
         Qt${QT_VERSION_MAJOR}::Widgets
-        Qt${QT_VERSION_MAJOR}::Sql
         Qt${QT_VERSION_MAJOR}::Network
         )
 
