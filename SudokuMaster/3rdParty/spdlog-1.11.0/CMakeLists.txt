@@ -139,6 +139,15 @@ if(SPDLOG_BUILD_PIC)
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
 
+# qt
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS
+        Widgets
+        )
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS
+        Widgets
+        )
+# qt
+
 find_package(Threads REQUIRED)
 message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 # ---------------------------------------------------------------------------------------
