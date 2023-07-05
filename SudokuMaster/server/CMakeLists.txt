@@ -23,16 +23,15 @@ add_executable(${projectName}
         ./resource/res.qrc
         )
 
- # spdlog库
-find_package(spdlog REQUIRED PATHS ../3rdParty/lib)
-
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS
         Core
         Network
+        Sql
         )
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS
         Core
         Network
+        Sql
         )
 
 target_link_libraries(${projectName} PRIVATE
@@ -43,6 +42,7 @@ target_link_libraries(${projectName}
         PRIVATE
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Network
+        Qt${QT_VERSION_MAJOR}::Sql
         )
 
 install(TARGETS ${projectName}
