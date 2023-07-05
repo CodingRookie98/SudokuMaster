@@ -1,16 +1,17 @@
-#include "globalLogger.h"
 #include <QDebug>
+#include "globalLogger.h"
 #include "spdlog/sinks/daily_file_sink.h"
+#include "spdlog/async.h"
 
 GlobalLogger::GlobalLogger(): QRunnable() {
-    qDebug() << "GlobalLogger init";
+    qDebug() << "GlobalLogger construct";
     mLogger = spdlog::daily_logger_mt<spdlog::async_factory>("user", "client-logs/log.txt", 23, 59);
     mLogger->set_level(spdlog::level::level_enum::trace);
     setAutoDelete(false);
 }
 
 GlobalLogger::~GlobalLogger() {
-    qDebug() << "star to destroy";
+    qDebug() << "destroy the GlobalLogger";
     mLogger.reset();
 }
 
@@ -38,6 +39,7 @@ void GlobalLogger::log(const GlobalLogger::MessageType &type, const QString &mes
         default:
             break;
     }
+    mLogger->flush();
 }
 
 GlobalLogger &GlobalLogger::getInstance() {

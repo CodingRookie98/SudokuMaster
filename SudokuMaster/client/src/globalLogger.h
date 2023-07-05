@@ -1,11 +1,9 @@
 #ifndef GLOBALLOGGER_H
 #define GLOBALLOGGER_H
-
 #include <QString>
 #include <QSharedPointer>
 #include <QRunnable>
-#include "spdlog/async.h"
-#include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/spdlog.h"
 
 class GlobalLogger : public QRunnable{
 public:
