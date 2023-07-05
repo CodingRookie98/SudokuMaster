@@ -25,10 +25,7 @@ public:
     ~ConnectedMap();
 
 signals:
-
-    void insertToMap(QSharedPointer<QSslSocket> &, QSharedPointer<SslSocketThread> &);
-
-    void connectionDisconnected(QSharedPointer<QSslSocket> &sharedSslSocket);
+    void insertToMap(const QSharedPointer<QSslSocket>&, const QSharedPointer<SslSocketThread>&);
 
 protected:
     void run() override;
@@ -40,8 +37,7 @@ private:
     void signalProcess();
 
 private slots:
-
-    void insertAndStart(QSharedPointer<QSslSocket> &sslSocket, QSharedPointer<SslSocketThread> &sslSocketThread);
+    void insertAndStart(const QSharedPointer<QSslSocket> &sslSocket, const QSharedPointer<SslSocketThread> &sslSocketThread);
 };
 
 

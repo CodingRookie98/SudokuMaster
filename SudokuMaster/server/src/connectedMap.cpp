@@ -32,15 +32,16 @@ void ConnectedMap::signalProcess() {
     connect(this, &ConnectedMap::insertToMap, this, &ConnectedMap::insertAndStart);
 }
 
-void ConnectedMap::insertAndStart(QSharedPointer<QSslSocket> &sslSocket, QSharedPointer<SslSocketThread> &sslSocketThread) {
+void ConnectedMap::insertAndStart(const QSharedPointer<QSslSocket> &sharedSslSocket,
+                                  const QSharedPointer<SslSocketThread> &sharedSslSocketThread) {
     qDebug() << "ConnectedMap::insert()";
 
-    auto iter = connectedMap->insert(sslSocket, sslSocketThread);
-    QThreadPool::globalInstance()->start(iter.value().get());
+    connectedMap->insert(sharedSslSocket, sharedSslSocketThread);
+    QThreadPool::globalInstance()->start(sharedSslSocketThread.get());
 
-    connect(this, &ConnectedMap::connectionDisconnected,
-            this, [&](QSharedPointer<QSslSocket>& sharedSslSocket){
-        qDebug() << "delete in connectedMap";
+    //When the connection is disconnected, remove the connection from the map
+    connect(sharedSslSocket.get(), &QSslSocket::disconnected, this, [&](){
+        qDebug() << "delete connection in map";
         connectedMap->remove(sharedSslSocket);
     });
 }
