@@ -98,9 +98,5 @@ void sslServer::sslSocketReady(QSslSocket *sslSocket) {
 
     // 将连接放入map进行管理，在map类中统一进行启动或者删除
     emit connectedMap->insertToMap(sharedSslSocket, mSslSocketThread);
-    connect(sharedSslSocket.get(), &QSslSocket::disconnected, this, [&]() {
-        qDebug() <<  "one sslSocket Disconnected";
-        // 发出信号让connectionMap从map删除此链接
-        emit connectedMap->connectionDisconnected(sharedSslSocket);
-    });
+    qDebug() << "active thread count :" << QThreadPool::globalInstance()->activeThreadCount();
 }
