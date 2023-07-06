@@ -58,30 +58,22 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS
 find_package(OpenSSL REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 
-#if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(${targetName}
             MANUAL_FINALIZATION
             ${PROJECT_SOURCES}
             ./resource/res.qrc
             )
     qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
-#else ()
-#    if (ANDROID)
-#        add_library(${targetName} SHARED
-#                ${PROJECT_SOURCES}
-#                )
-#        # Define properties for Android with Qt 5 after find_package() calls as:
-#        #    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-#    else ()
-#        add_executable(${targetName}
-#                ${PROJECT_SOURCES}
-#                )
-#    endif ()
-#    qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
-#endif ()
+else ()
+    add_executable(${targetName}
+            ${PROJECT_SOURCES}
+            )
+    qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
+endif ()
 
 
-target_link_libraries(${targetName} PRIVATE spdlog::spdlog )
+target_link_libraries(${targetName} PRIVATE spdlog::spdlog)
 target_link_libraries(${targetName} PRIVATE OpenSSL::SSL OpenSSL::Crypto)
 target_link_libraries(${targetName} PRIVATE
         Qt${QT_VERSION_MAJOR}::Widgets
