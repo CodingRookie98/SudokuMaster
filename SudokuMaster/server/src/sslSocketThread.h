@@ -13,6 +13,8 @@
 
 #include <QSslSocket>
 #include <QRunnable>
+#include <QJsonObject>
+#include <QSqlDatabase>
 
 class SslSocketThread : public QObject, public QRunnable {
 Q_OBJECT
@@ -29,12 +31,21 @@ protected:
 
 private:
     QSharedPointer<QSslSocket> sharedSslSocket;
+    QSqlDatabase db;
 
     void init();
 
     void signalProcess();
 
     void log(const QString& message) ;
+
+    void processReadyReadData();
+
+    void signUpRequestProcess(const QJsonObject& jsonObject);
+
+    void loginInRequestProcess(const QJsonObject& jsonObject);
+
+    void writeToUser(const QJsonDocument& jsonDocument);
 };
 
 
