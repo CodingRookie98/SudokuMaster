@@ -43,7 +43,7 @@ message(STATUS "CMake Source Directory: ${CMAKE_SOURCE_DIR}")
 message(STATUS "CMake Binary Directory: ${CMAKE_BINARY_DIR}")
 
 include_directories(
-        ./3rdParty/spdlog-1.11.0/include
+#        ./3rdParty/spdlog-1.11.0/include
         ./publicFile
 )
 
@@ -52,9 +52,9 @@ add_subdirectory(
 )
 
 # 第三方库spdlog
-add_subdirectory(
-        ./3rdParty/spdlog-1.11.0
-)
+#add_subdirectory(
+#        ./3rdParty/spdlog-1.11.0
+#)
 
 add_subdirectory(
         server

@@ -33,10 +33,11 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS
         Network
         Sql
         )
-
-target_link_libraries(${projectName} PRIVATE
-        spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>
-        )
+find_package(spdlog CONFIG REQUIRED)
+target_link_libraries(${projectName} PRIVATE spdlog::spdlog)
+#target_link_libraries(${projectName} PRIVATE
+#        spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>
+#        )
 
 target_link_libraries(${projectName}
         PRIVATE

@@ -34,6 +34,9 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS
         Network
         )
 
+find_package(OpenSSL REQUIRED)
+find_package(spdlog CONFIG REQUIRED)
+
 #if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(${targetName}
             MANUAL_FINALIZATION
@@ -57,10 +60,11 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS
 #endif ()
 
 
-target_link_libraries(${targetName} PRIVATE
-        spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>
-        )
-
+target_link_libraries(${targetName} PRIVATE spdlog::spdlog )
+#target_link_libraries(${targetName} PRIVATE
+#        spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>
+#        )
+target_link_libraries(${targetName} PRIVATE OpenSSL::SSL OpenSSL::Crypto)
 target_link_libraries(${targetName} PRIVATE
         Qt${QT_VERSION_MAJOR}::Widgets
         Qt${QT_VERSION_MAJOR}::Network
