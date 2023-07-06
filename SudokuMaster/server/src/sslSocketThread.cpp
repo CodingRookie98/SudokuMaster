@@ -23,6 +23,7 @@ SslSocketThread::SslSocketThread(const QSharedPointer<QSslSocket> &sslSocket)
 }
 
 SslSocketThread::~SslSocketThread() {
+    db.close();
     sharedSslSocket.reset();
 }
 
