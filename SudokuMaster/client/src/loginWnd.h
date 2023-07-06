@@ -31,7 +31,7 @@ private:
 
     static QString sha256(const QString &password);
 
-    void processSslSocketMessage(QJsonDocument jsonDoc);
+    void processReceivedData(const QJsonObject& jsonObject);
 
     static void log(GlobalLogger::MessageType type, const QString& message);
 };

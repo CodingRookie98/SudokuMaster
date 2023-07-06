@@ -36,19 +36,15 @@ void LoginWnd::BtnEvent() {
 
 void LoginWnd::loginInClicked() {
     connect(ui->loginInBtn, &QPushButton::clicked, this, [&]() {
-        //        qDebug() << "login in Btn cliked";
         GlobalLogger::getInstance().log(GlobalLogger::MessageType::Info, "login in Btn cliked");
         if (ui->userNameEdit->text().isEmpty() || ui->passwordEdit->text().isEmpty()) {
             QMessageBox mes(this);
-            qDebug() << "Login!!";
             mes.setText(tr("Username or password cannot be empty!"));
             mes.exec();
         } else {
             QJsonObject jsonObject;
-            jsonObject.insert(sslSocketMessage::MessageOwnerQStr[sslSocketMessage::MessageOwner::LoginWnd],
-                              sslSocketMessage::MessageOwnerQStr[sslSocketMessage::MessageOwner::LoginWnd]);
-            jsonObject.insert(sslSocketMessage::ClientMessageTypeQStr[sslSocketMessage::ClientMessageType::LoginIn],
-                              sslSocketMessage::ClientMessageTypeQStr[sslSocketMessage::ClientMessageType::LoginIn]);
+            jsonObject.insert(sslSocketMessage::keyRequestType,
+                              sslSocketMessage::RequestTypeQStr[sslSocketMessage::RequestType::LoginIn]);
             jsonObject.insert(sslSocketMessage::UserInfoTypeQStr[sslSocketMessage::UserInfoType::Username],
                               ui->userNameEdit->text());
             jsonObject.insert(sslSocketMessage::UserInfoTypeQStr[sslSocketMessage::UserInfoType::Password],
@@ -67,10 +63,8 @@ void LoginWnd::signUpClicked() {
             mes.exec();
         } else {
             QJsonObject jsonObject;
-            jsonObject.insert(sslSocketMessage::MessageOwnerQStr[sslSocketMessage::MessageOwner::LoginWnd],
-                              sslSocketMessage::MessageOwnerQStr[sslSocketMessage::MessageOwner::LoginWnd]);
-            jsonObject.insert(sslSocketMessage::ClientMessageTypeQStr[sslSocketMessage::ClientMessageType::SignUp],
-                              sslSocketMessage::ClientMessageTypeQStr[sslSocketMessage::ClientMessageType::SignUp]);
+            jsonObject.insert(sslSocketMessage::keyRequestType,
+                              sslSocketMessage::RequestTypeQStr[sslSocketMessage::RequestType::SignUp]);
             jsonObject.insert(sslSocketMessage::UserInfoTypeQStr[sslSocketMessage::UserInfoType::Username],
                               ui->userNameEdit->text());
             jsonObject.insert(sslSocketMessage::UserInfoTypeQStr[sslSocketMessage::UserInfoType::Password],
@@ -95,40 +89,38 @@ void LoginWnd::signalProcess() {
     BtnEvent();
 
     connect(&SslSocketThread::getInstance(), &SslSocketThread::readyReadForLoginWnd, this,
-            &LoginWnd::processSslSocketMessage);
+            &LoginWnd::processReceivedData);
 }
 
-void LoginWnd::processSslSocketMessage(const QJsonDocument jsonDoc) {
-    if (!jsonDoc.isNull()) {
-        if (jsonDoc.isObject()) {
-            QJsonObject object = jsonDoc.object();
-            QString messageOwner = object[sslSocketMessage::keyMessageOwner].toString();
-            if (sslSocketMessage::QStrMessageOwner[messageOwner] == sslSocketMessage::MessageOwner::LoginWnd) {
-                for (QJsonObject::ConstIterator itr = object.constBegin(); itr != object.constEnd(); ++itr) {
-                    sslSocketMessage::ServerMessageType messageType = sslSocketMessage::QStrServerMessageType[itr.value().toString()];
-                    QMessageBox messageBox(this);
-                    switch (messageType) {
-                        case sslSocketMessage::ServerMessageType::SignUpSuccess :
-                            messageBox.setText(tr("Sign up success, please login in"));
-                            break;
-                        case sslSocketMessage::ServerMessageType::UserNotExist :
-                            messageBox.setText(tr("User does not exist, please re-enter or sign up"));
-                            break;
-                        case sslSocketMessage::ServerMessageType::WrongPassword :
-                            messageBox.setText(tr("Wrong password, please re-enter"));
-                            break;
-                        case sslSocketMessage::ServerMessageType::UsernameAlreadyExists :
-                            messageBox.setText(tr("Username already exists, please re-enter"));
-                            break;
-                    }
-                    messageBox.exec();
-                }
-            }
-        } else {
-            log(GlobalLogger::MessageType::Error, "The SslSocket received Json Document is not a Object");
+void LoginWnd::processReceivedData(const QJsonObject &jsonObject) {
+    if (!jsonObject.isEmpty()) {
+        auto responseType = sslSocketMessage::QStrResponseType[jsonObject.value(sslSocketMessage::keyResponseType).toString()];
+        qDebug() << jsonObject.value(sslSocketMessage::keyResponseType).toString();
+        QMessageBox messageBox(this);
+        switch (responseType) {
+            case sslSocketMessage::ResponseType::SignUpSuccess :
+                messageBox.setText(tr("Sign up success, please login in"));
+                break;
+            case sslSocketMessage::ResponseType::UserNotExist :
+                messageBox.setText(tr("User does not exist, please re-enter or sign up"));
+                break;
+            case sslSocketMessage::ResponseType::WrongPassword :
+                messageBox.setText(tr("Wrong password, please re-enter"));
+                break;
+            case sslSocketMessage::ResponseType::UsernameAlreadyExists :
+                messageBox.setText(tr("Username already exists, please re-enter"));
+                break;
+            case sslSocketMessage::ResponseType::LoginInSuccess:
+                qDebug() << "LoginInSuccess";
+                this->close();
+                break;
+        }
+        if (!messageBox.text().isEmpty()) {
+
+            messageBox.exec();
         }
     } else {
-        log(GlobalLogger::MessageType::Error, "The SslSocket received Json Document is not null");
+        log(GlobalLogger::MessageType::Error, "The login window received Json Object is empty");
     }
 }
 
