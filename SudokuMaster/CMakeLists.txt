@@ -17,44 +17,13 @@ if (NOT DEFINED CMAKE_SOURCE_DIR)
     set(CMAKE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 endif ()
 
-if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    # Linux系统
-    # 在这里添加针对Linux的特定配置
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_CURRENT_SOURCE_DIR}/bin/Linux/Debug-Linux)
-    Set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_SOURCE_DIR}/bin/Linux/Release-Linux)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL ${CMAKE_CURRENT_SOURCE_DIR}/bin/Linux/minSizeRe-Linux)
-    # 设置默认的构建目录
-    if (NOT DEFINED CMAKE_BINARY_DIR)
-        set(CMAKE_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/build-linux)
-    endif ()
-elseif (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    # Windows系统
-    # 在这里添加针对Windows的特定配置
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_CURRENT_SOURCE_DIR}/bin/Win/Debug-Win)
-    Set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_SOURCE_DIR}/bin/Win/Release-Win)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL ${CMAKE_CURRENT_SOURCE_DIR}/bin/Win/minSizeRe-Win)
-    # 设置默认的构建目录
-    if (NOT DEFINED CMAKE_BINARY_DIR)
-        set(CMAKE_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/build-win)
-    endif ()
-endif ()
-
-message(STATUS "CMake Source Directory: ${CMAKE_SOURCE_DIR}")
-message(STATUS "CMake Binary Directory: ${CMAKE_BINARY_DIR}")
-
 include_directories(
-#        ./3rdParty/spdlog-1.11.0/include
         ./publicFile
 )
 
 add_subdirectory(
         client
 )
-
-# 第三方库spdlog
-#add_subdirectory(
-#        ./3rdParty/spdlog-1.11.0
-#)
 
 add_subdirectory(
         server
