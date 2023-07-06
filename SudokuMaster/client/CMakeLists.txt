@@ -3,6 +3,27 @@ set(TS_FILES ./src/SudokuMaster_zh_CN.ts)
 
 set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/install)
 
+if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    # Linux系统
+    # 在这里添加针对Linux的特定配置
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_CURRENT_SOURCE_DIR}/bin/Linux/Debug)
+    Set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_SOURCE_DIR}/bin/Linux/Release)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL ${CMAKE_CURRENT_SOURCE_DIR}/bin/Linux/minSizeRe)
+    # 设置默认的构建目录
+    if (NOT DEFINED CMAKE_BINARY_DIR)
+        set(CMAKE_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/build-linux)
+    endif ()
+elseif (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    # Windows系统
+    # 在这里添加针对Windows的特定配置
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_CURRENT_SOURCE_DIR}/bin/Win/Debug)
+    Set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_SOURCE_DIR}/bin/Win/Release)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL ${CMAKE_CURRENT_SOURCE_DIR}/bin/Win/minSizeRe)
+    # 设置默认的构建目录
+    if (NOT DEFINED CMAKE_BINARY_DIR)
+        set(CMAKE_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/build-win)
+    endif ()
+endif ()
 # 遍历所有.cpp、.h、.ui文件
 file(GLOB_RECURSE cpp_h_ui_path
         ./src/*.cpp
@@ -61,9 +82,6 @@ find_package(spdlog CONFIG REQUIRED)
 
 
 target_link_libraries(${targetName} PRIVATE spdlog::spdlog )
-#target_link_libraries(${targetName} PRIVATE
-#        spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>
-#        )
 target_link_libraries(${targetName} PRIVATE OpenSSL::SSL OpenSSL::Crypto)
 target_link_libraries(${targetName} PRIVATE
         Qt${QT_VERSION_MAJOR}::Widgets
