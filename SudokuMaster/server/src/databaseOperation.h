@@ -13,15 +13,17 @@
 #include <QString>
 #include <QMap>
 
-enum DatabaseOperationType {
-    AddUser,
-    SelectUserName,
-    IsCorrectPassword,
-};
+namespace databaseOperation {
+    enum DatabaseOperationType {
+        add_user,
+        select_user_name,
+        is_correct_password,
+    };
 
-static QMap<DatabaseOperationType, QString> DatabaseOperationQStr {
-        {DatabaseOperationType::AddUser, "SELECT addUser('%1', '%2')"}, // %1: userName, %2: password
-        {DatabaseOperationType::SelectUserName, "SELECT selectUserName('%1')"}, // %1: userName
-        {DatabaseOperationType::IsCorrectPassword, "SELECT isCorrectPassword('%1', '%2')"}, // %1: userName, %2: password
-};
+    static QMap<DatabaseOperationType, QString> DatabaseOperationQStr{
+            {DatabaseOperationType::add_user,            "SELECT add_user('%1', '%2')"}, // %1: userName, %2: password
+            {DatabaseOperationType::select_user_name,    "SELECT select_user_name('%1')"}, // %1: userName
+            {DatabaseOperationType::is_correct_password, "SELECT is_correct_password('%1', '%2')"}, // %1: userName, %2: password
+    };
+}
 #endif //SUDOKUMASTER_DATABASEOPERATION_H
