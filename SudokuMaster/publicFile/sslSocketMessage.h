@@ -16,60 +16,72 @@
 
 
 namespace sslSocketMessage {
-    QString keyMessageOwner("MessageOwner");
 
-    enum MessageOwner {
-        LoginWnd,
+    /* ============= Request type ============= */
+    static const QString keyRequestType("RequestType");
+    enum RequestType {
+        SignUp,
+        LoginIn
     };
 
-    static QMap<MessageOwner, QString> MessageOwnerQStr{
-            {MessageOwner::LoginWnd, "LoginWnd"},
+    static QMap<RequestType, QString> RequestTypeQStr{
+            {RequestType::SignUp,  "SignUp"},
+            {RequestType::LoginIn, "LoginIn"}
     };
 
-    static QMap<QString, MessageOwner> QStrMessageOwner;
+    static QMap<QString, RequestType> QStrRequestType{
+            {"SignUp",  RequestType::SignUp},
+            {"LoginIn", RequestType::LoginIn}
+    };
 
+    /* ============= Request type ============= */
+
+
+    /* ============= Response type ============= */
+    static const QString keyResponseType("ResponseType");
+    enum ResponseType {
+        UsernameAlreadyExists,
+        UserNotExist,
+        WrongPassword,
+        SignUpSuccess,
+        LoginInSuccess,
+    };
+
+    static QMap<ResponseType, QString> ResponseTypeQStr{
+            {ResponseType::UsernameAlreadyExists, "UsernameAlreadyExists"},
+            {ResponseType::UserNotExist,          "UserNotExist"},
+            {ResponseType::WrongPassword,         "WrongPassword"},
+            {ResponseType::SignUpSuccess,         "SignUpSuccess"},
+            {ResponseType::LoginInSuccess,        "LoginInSuccess"},
+    };
+
+    static QMap<QString, ResponseType> QStrResponseType{
+            {"UsernameAlreadyExists", ResponseType::UsernameAlreadyExists},
+            {"UserNotExist",          ResponseType::UserNotExist,},
+            {"WrongPassword",         ResponseType::WrongPassword,},
+            {"SignUpSuccess",         ResponseType::SignUpSuccess,},
+            {"LoginInSuccess",        ResponseType::LoginInSuccess,},
+    };
+    /* ============= Response type ============= */
+
+
+    /* ============= user info ============= */
     enum UserInfoType {
         Username,
         Password,
     };
 
-    static QMap<UserInfoType, QString> UserInfoTypeQStr {
+    static QMap<UserInfoType, QString> UserInfoTypeQStr{
             {UserInfoType::Username, "Username"},
-            {Password, "Password"},
+            {UserInfoType::Password, "Password"},
     };
 
-    static QMap<QString, UserInfoType> QStrUserInfoType;
-
-    enum ClientMessageType {
-        SignUp,
-        LoginIn
+    static QMap<QString, UserInfoType> QStrUserInfoType{
+            {"Username", UserInfoType::Username},
+            {"Password", UserInfoType::Password},
     };
+    /* ============= user info ============= */
 
-    static QMap<ClientMessageType, QString> ClientMessageTypeQStr{
-            {ClientMessageType::SignUp,  "SignUp"},
-            {ClientMessageType::LoginIn, "LoginIn"}
-    };
-
-    static QMap<QString, ClientMessageType> QStrClientMessageType;
-
-    enum ServerMessageType {
-        UsernameAlreadyExists,
-        UserNotExist,
-        WrongPassword,
-        SignUpSuccess,
-    };
-
-    static QMap<ServerMessageType, QString> ServerMessageTypeQStr{
-            {ServerMessageType::UsernameAlreadyExists, "UsernameAlreadyExists"},
-            {ServerMessageType::UserNotExist,          "UserNotExist"},
-            {ServerMessageType::WrongPassword,         "WrongPassword"},
-            {ServerMessageType::SignUpSuccess,         "SignUpSuccess"},
-    };
-
-    static QMap<QString, ServerMessageType> QStrServerMessageType;
-
-
-    void init();
 }
 
 #endif //SUDOKUMASTER_SSLSOCKETMESSAGE_H
