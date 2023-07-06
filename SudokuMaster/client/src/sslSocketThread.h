@@ -7,6 +7,8 @@
 
 #include <QSslSocket>
 #include "GlobalLogger.h"
+#include <QJsonObject>
+#include <QJsonDocument>
 
 class SslSocketThread : public QSslSocket, public QRunnable {
 Q_OBJECT
@@ -22,7 +24,7 @@ public:
 
 signals:
 
-    void readyReadForLoginWnd(const QJsonDocument jsonDoc);
+    void readyReadForLoginWnd(const QJsonObject jsonObject);
 
     void readyWrite(const QJsonDocument jsonDoc);
 
