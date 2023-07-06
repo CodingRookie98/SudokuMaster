@@ -34,6 +34,8 @@ private:
     void processReceivedData(const QJsonObject& jsonObject);
 
     static void log(GlobalLogger::MessageType type, const QString& message);
+
+    void saveUserLoginInformation(const QJsonObject& jsonObject);
 };
 
 #endif // LOGINWND_H

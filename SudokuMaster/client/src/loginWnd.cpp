@@ -3,11 +3,14 @@
 #include <QCryptographicHash>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QFile>
+#include <QDir>
 #include "GlobalLogger.h"
 #include "ui_loginWnd.h"
 #include "loginWnd.h"
 #include "sslSocketThread.h"
 #include "sslSocketMessage.h"
+#include "toolFunction.h"
 
 LoginWnd::LoginWnd(QWidget *parent) :
         QDialog(parent),
@@ -94,8 +97,8 @@ void LoginWnd::signalProcess() {
 
 void LoginWnd::processReceivedData(const QJsonObject &jsonObject) {
     if (!jsonObject.isEmpty()) {
-        auto responseType = sslSocketMessage::QStrResponseType[jsonObject.value(sslSocketMessage::keyResponseType).toString()];
-        qDebug() << jsonObject.value(sslSocketMessage::keyResponseType).toString();
+        auto responseType = sslSocketMessage::QStrResponseType[jsonObject.value(
+                sslSocketMessage::keyResponseType).toString()];
         QMessageBox messageBox(this);
         switch (responseType) {
             case sslSocketMessage::ResponseType::SignUpSuccess :
@@ -111,12 +114,11 @@ void LoginWnd::processReceivedData(const QJsonObject &jsonObject) {
                 messageBox.setText(tr("Username already exists, please re-enter"));
                 break;
             case sslSocketMessage::ResponseType::LoginInSuccess:
-                qDebug() << "LoginInSuccess";
                 this->close();
+                saveUserLoginInformation(jsonObject);
                 break;
         }
         if (!messageBox.text().isEmpty()) {
-
             messageBox.exec();
         }
     } else {
@@ -126,4 +128,36 @@ void LoginWnd::processReceivedData(const QJsonObject &jsonObject) {
 
 void LoginWnd::log(const GlobalLogger::MessageType type, const QString &message) {
     GlobalLogger::getInstance().log(type, message);
+}
+
+void LoginWnd::saveUserLoginInformation(const QJsonObject &jsonObject) {
+    QJsonObject userCache;
+    auto iterUsername = jsonObject.constFind(
+            sslSocketMessage::UserInfoTypeQStr[sslSocketMessage::UserInfoType::Username]);
+    auto iterPassword = jsonObject.constFind(
+            sslSocketMessage::UserInfoTypeQStr[sslSocketMessage::UserInfoType::Password]);
+    userCache.insert(iterUsername.key(), iterUsername.value());
+    userCache.insert(iterPassword.key(), iterPassword.value());
+
+    // Cache user login information
+    QString cacheFolderPath = "./userInfoCache";
+    QDir cacheFolder(cacheFolderPath);
+    if (!cacheFolder.exists()) {
+        if (!cacheFolder.mkpath(".")) {
+            log(GlobalLogger::MessageType::Error, QString("Failed to create <userInfoCache> folder."));
+            return;
+        }
+    }
+    QJsonDocument userJsonDocment(userCache);
+    QString fileName(iterUsername.value().toString() + "%1");
+    QFile encryptedFile(cacheFolderPath + "/" + fileName.arg(".user"));
+    if (encryptedFile.open(QIODevice::WriteOnly)) {
+        QByteArray key = "0123456789abcdef0123456789abcdef";
+        QByteArray iv = "fedcba9876543210fedcba9876543210";
+        QByteArray data = toolFunction::encrypt(key, iv, userJsonDocment.toJson());
+        encryptedFile.write(data);
+        encryptedFile.close();
+    } else {
+        log(GlobalLogger::MessageType::Error, QString("Failed to open or create %1").arg(encryptedFile.fileName()));
+    }
 }
